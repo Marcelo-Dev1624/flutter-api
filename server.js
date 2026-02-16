@@ -1,41 +1,35 @@
-require("dotenv").config();
-const express = require("express");
-const mongoose = require("mongoose");
+// server.js
+require('dotenv').config(); // Cargar variables de entorno
+
+const express = require('express');
+const mongoose = require('mongoose');
 
 const app = express();
+const PORT = process.env.PORT || 3000;
+const MONGODB_URI = process.env.MONGODB_URI;
 
+// Middleware para parsear JSON (fundamental para recibir datos del cliente)
 app.use(express.json());
 
-// Import routes
-const itemRoutes = require("./routes/itemRoutes");
-
-// Use routes
-app.use("/api/items", itemRoutes);
-
-
-app.get("/", (req, res) => {
-  res.json({ status: "ok", message: "Flutter API is running" });
-});
-
-app.get("/health", (req, res) => {
-  res.json({ status: "ok" });
-});
-
-const { MONGODB_URI, PORT } = process.env;
-
-if (!MONGODB_URI) {
-  throw new Error("MONGODB_URI is missing in .env");
-}
-
-mongoose
-  .connect(MONGODB_URI)
+// Conexión a MongoDB Atlas
+mongoose.connect(MONGODB_URI)
   .then(() => {
-    const port = Number(PORT) || 3000;
-    app.listen(port, () => {
-      console.log(`Server listening on port ${port}`);
+    console.log('✅ Conexión exitosa a MongoDB Atlas');
+
+    // Iniciar el servidor solo si la conexión es exitosa
+    app.listen(PORT, () => {
+      console.log(`🚀 Servidor corriendo en http://localhost:${PORT}`);
     });
   })
-  .catch((err) => {
-    console.error("MongoDB connection error:", err);
-    process.exit(1);
+  .catch((error) => {
+    console.error('❌ Error de conexión a MongoDB:', error.message);
   });
+
+// Ruta de prueba
+app.get('/', (req, res) => {
+  res.send('API para Flutter activa.');
+});
+
+// Aquí se incluirán las rutas de la API (CRUD)
+const itemRoutes = require('./routes/itemRoutes');
+app.use('/api/items', itemRoutes);
