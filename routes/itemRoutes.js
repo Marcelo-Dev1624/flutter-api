@@ -1,15 +1,15 @@
 const express = require('express');
 const router = express.Router();
-const Item = require('../models/item');
+const item = require('./models/item');
 
 
 
 // CREATE (POST)
 router.post('/', async (req, res) => {
   try {
-    const newItem = new Item(req.body);
-    const savedItem = await newItem.save();
-    res.status(201).json(savedItem);
+    const newitem = new item(req.body);
+    const saveditem = await newitem.save();
+    res.status(201).json(saveditem);
   } catch (error) {
     res.status(400).json({ error: error.message });
   }
@@ -18,7 +18,7 @@ router.post('/', async (req, res) => {
 // READ ALL (GET)
 router.get('/', async (req, res) => {
   try {
-    const items = await Item.find();
+    const items = await item.find();
     res.json(items);
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -28,12 +28,12 @@ router.get('/', async (req, res) => {
 // UPDATE (PUT)
 router.put('/:id', async (req, res) => {
   try {
-    const updatedItem = await Item.findByIdAndUpdate(
+    const updateditem = await item.findByIdAndUpdate(
       req.params.id,
       req.body,
       { new: true }
     );
-    res.json(updatedItem);
+    res.json(updateditem);
   } catch (error) {
     res.status(400).json({ error: error.message });
   }
@@ -42,8 +42,8 @@ router.put('/:id', async (req, res) => {
 // DELETE
 router.delete('/:id', async (req, res) => {
   try {
-    await Item.findByIdAndDelete(req.params.id);
-    res.json({ message: 'Item deleted successfully' });
+    await item.findByIdAndDelete(req.params.id);
+    res.json({ message: 'item deleted successfully' });
   } catch (error) {
     res.status(400).json({ error: error.message });
   }
